@@ -25,7 +25,7 @@ def synthesize_seed_template(scale, angle_deg):
     """Create a synthetic rotated 'TIET' template for initial scale/angle discovery."""
     size = int(round(140 * scale))
     size = max(48, size + (size % 2))
-    canvas = np.zeros((size, size), dtype=np.float32)
+    canvas = np.zeros((size, size), dtype=np.uint8)
 
     font_scale = 0.80 * scale
     thickness = max(1, int(round(1.8 * scale)))
@@ -35,11 +35,11 @@ def synthesize_seed_template(scale, angle_deg):
 
     cv2.putText(
         canvas, "TIET", (tx, ty),
-        cv2.FONT_HERSHEY_SIMPLEX, font_scale, 1.0, thickness, cv2.LINE_AA
+        cv2.FONT_HERSHEY_SIMPLEX, font_scale, 255, thickness, cv2.LINE_8
     )
 
     M = cv2.getRotationMatrix2D((size / 2.0, size / 2.0), angle_deg, 1.0)
-    rotated = cv2.warpAffine(canvas, M, (size, size), flags=cv2.INTER_LINEAR)
+    rotated = cv2.warpAffine(canvas.astype(np.float32) / 255.0, M, (size, size), flags=cv2.INTER_LINEAR)
 
     ys, xs = np.where(rotated > 0.05)
     if len(xs) == 0:
