@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DarkHero's Kamero-DL</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07090e;
+      --surface: #0f1420;
+      --surface-2: #161d2f;
+      --border: #1f2942;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at 50% 0%, #171e36 0%, var(--bg) 60%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2.5rem 1rem 2rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(99, 102, 241, 0.12);
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 0.3rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      margin-bottom: 0.9rem;
+    }
+
+    h1 {
+      font-size: clamp(1.85rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.45rem;
+      background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.96rem;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .how-to {
+      color: #cbd5e1;
+      font-size: 0.86rem;
+      max-width: 600px;
+      margin: 0.65rem auto 0;
+      line-height: 1.5;
+    }
+
+    .how-to strong {
+      color: #a5b4fc;
+      font-weight: 600;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.35rem;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .input-group {
+        flex-direction: column;
+      }
+    }
+
+    .url-input {
+      flex: 1;
+      background: #080b12;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.9rem 1.1rem;
+      border-radius: 11px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .url-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.4rem;
+      border-radius: 11px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: var(--surface-2);
+      color: var(--text);
+      border-color: var(--border);
+      padding: 0.6rem 1rem;
+      font-size: 0.84rem;
+      border-radius: 9px;
+    }
+
+    .btn-outline:hover:not(:disabled) {
+      border-color: #3b4b75;
+      background: #1d263d;
+    }
+
+    .btn-outline.active {
+      background: rgba(99, 102, 241, 0.18);
+      border-color: var(--accent);
+      color: #c7d2fe;
+    }
+
+    .btn-download {
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: #fff;
+      padding: 0.6rem 1.15rem;
+      font-size: 0.85rem;
+      border-radius: 9px;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+    }
+
+    .btn-download:hover {
+      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status-box {
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+    }
+
+    .status-box.loading {
+      display: flex;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #c7d2fe;
+    }
+
+    .status-box.error {
+      display: flex;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+
+    .spinner {
+      width: 17px;
+      height: 17px;
+      border: 2.5px solid rgba(165, 180, 252, 0.25);
+      border-top-color: #818cf8;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #previewCard {
+      display: none;
+    }
+
+    .viewer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .viewer-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .state-tag {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+    }
+
+    .state-tag.cleaned {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .meta-item {
+      font-size: 0.82rem;
+      color: var(--muted);
+      background: #080b12;
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+    }
+
+    .meta-item strong {
+      color: var(--text);
+    }
+
+    .viewer-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .stage {
+      background: #070a10;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 280px;
+      max-height: 75vh;
+      overflow: auto;
+    }
+
+    .stage img {
+      max-width: 100%;
+      max-height: calc(75vh - 2rem);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 8px;
+      display: block;
+      transition: transform 0.15s ease;
+    }
+
+    .stage.zoomed {
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+
+    .stage.zoomed img {
+      max-width: none;
+      max-height: none;
+      cursor: zoom-out;
+    }
+
+    .stage:not(.zoomed) img {
+      cursor: zoom-in;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 2.5rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    footer strong {
+      color: #c7d2fe;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">DarkHero</div>
+      <h1>Kamero Image-DL</h1>
+      <p class="subtitle">
+        Paste an image URL below to preview, remove the watermark at native resolution and download the PNG.
+      </p>
+      <p class="how-to">
+        <strong>How to get the URL:</strong> Open Kamero, select your photo, click the <strong>Share</strong> button in the top-right corner, copy the link (<code>https://cdn.kamero.ai/...</code>) and paste it below.
+      </p>
+    </header>
+
+    <section class="card">
+      <form id="processForm" class="input-group">
+        <input
+          type="url"
+          id="urlInput"
+          class="url-input"
+          placeholder="Paste image URL here (https://...)"
+          required
+        />
+        <button type="submit" id="processBtn" class="btn btn-primary">Remove Watermark</button>
+      </form>
+
+      <div id="statusBox" class="status-box">
+        <div id="statusSpinner" class="spinner"></div>
+        <span id="statusText">Processing...</span>
+      </div>
+    </section>
+
+    <section id="previewCard" class="card">
+      <div class="viewer-header">
+        <div class="viewer-meta">
+          <span id="stateTag" class="state-tag">Watermarked Image</span>
+          <span id="resPill" class="meta-item" style="display: none;">Resolution: <strong id="metaRes">—</strong></span>
+          <span id="sizePill" class="meta-item" style="display: none;">Size: <strong id="metaSize">—</strong></span>
+          <span id="timePill" class="meta-item" style="display: none;">Time: <strong id="metaTime">—</strong></span>
+        </div>
+
+        <div class="viewer-actions">
+          <button type="button" id="compareBtn" class="btn btn-outline" style="display: none;">
+            Show Watermarked
+          </button>
+          <a id="downloadBtn" class="btn btn-download" style="display: none;" download="cleaned.png">
+            Download PNG
+          </a>
+        </div>
+      </div>
+
+      <div id="stage" class="stage" title="Click to toggle 1:1 zoom">
+        <img id="stageImg" alt="Preview" />
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    Made with ❤️ by <strong>DarkHero</strong>
+  </footer>
+
+  <script>
+    const form = document.getElementById("processForm");
+    const urlInput = document.getElementById("urlInput");
+    const processBtn = document.getElementById("processBtn");
+    const statusBox = document.getElementById("statusBox");
+    const statusSpinner = document.getElementById("statusSpinner");
+    const statusText = document.getElementById("statusText");
+
+    const previewCard = document.getElementById("previewCard");
+    const stateTag = document.getElementById("stateTag");
+    const resPill = document.getElementById("resPill");
+    const sizePill = document.getElementById("sizePill");
+    const timePill = document.getElementById("timePill");
+    const metaRes = document.getElementById("metaRes");
+    const metaSize = document.getElementById("metaSize");
+    const metaTime = document.getElementById("metaTime");
+
+    const compareBtn = document.getElementById("compareBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const stage = document.getElementById("stage");
+    const stageImg = document.getElementById("stageImg");
+
+    let sourcePreviewUrl = null;
+    let cleanedBlobUrl = null;
+    let showingOriginal = false;
+    let timerInterval = null;
+
+    function showStatus(type, message) {
+      statusBox.className = "status-box " + type;
+      statusSpinner.style.display = type === "loading" ? "block" : "none";
+      statusText.textContent = message;
+    }
+
+    function hideStatus() {
+      statusBox.className = "status-box";
+    }
+
+    stage.addEventListener("click", () => {
+      stage.classList.toggle("zoomed");
+    });
+
+    // Automatically preview source image when a valid URL is pasted or typed
+    urlInput.addEventListener("input", () => {
+      const url = urlInput.value.trim();
+      if (!url.startsWith("http://") && !url.startsWith("https://")) return;
+
+      sourcePreviewUrl = `/api/preview-source?url=${encodeURIComponent(url)}`;
+      cleanedBlobUrl = null;
+      showingOriginal = true;
+
+      stage.classList.remove("zoomed");
+      stageImg.src = sourcePreviewUrl;
+      previewCard.style.display = "block";
+      stateTag.textContent = "Watermarked Image";
+      stateTag.className = "state-tag";
+
+      compareBtn.style.display = "none";
+      downloadBtn.style.display = "none";
+      sizePill.style.display = "none";
+      timePill.style.display = "none";
+    });
+
+    stageImg.addEventListener("load", () => {
+      if (stageImg.naturalWidth && stageImg.naturalHeight) {
+        metaRes.textContent = `${stageImg.naturalWidth} × ${stageImg.naturalHeight} px`;
+        resPill.style.display = "inline-block";
+      }
+    });
+
+    compareBtn.addEventListener("click", () => {
+      if (!cleanedBlobUrl || !sourcePreviewUrl) return;
+      showingOriginal = !showingOriginal;
+      if (showingOriginal) {
+        stageImg.src = sourcePreviewUrl;
+        stateTag.textContent = "Watermarked Image";
+        stateTag.className = "state-tag";
+        compareBtn.textContent = "Show Original";
+        compareBtn.classList.add("active");
+      } else {
+        stageImg.src = cleanedBlobUrl;
+        stateTag.textContent = "Original Image";
+        stateTag.className = "state-tag cleaned";
+        compareBtn.textContent = "Show Watermarked";
+        compareBtn.classList.remove("active");
+      }
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const url = urlInput.value.trim();
+      if (!url) return;
+
+      sourcePreviewUrl = `/api/preview-source?url=${encodeURIComponent(url)}`;
+      if (!stageImg.src) {
+        stageImg.src = sourcePreviewUrl;
+        previewCard.style.display = "block";
+      }
+
+      processBtn.disabled = true;
+      compareBtn.style.display = "none";
+      downloadBtn.style.display = "none";
+
+      const startTime = performance.now();
+      showStatus("loading", "Removing watermark... (0.0s)");
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        const elapsed = ((performance.now() - startTime) / 1000).toFixed(1);
+        statusText.textContent = `Removing watermark... (${elapsed}s)`;
+      }, 200);
+
+      try {
+        const resp = await fetch("/api/process", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+
+        clearInterval(timerInterval);
+
+        if (!resp.ok) {
+          let errMsg = `Server error (${resp.status})`;
+          try {
+            const errJson = await resp.json();
+            if (errJson.error) errMsg = errJson.error;
+          } catch (_) {}
+          showStatus("error", errMsg);
+          return;
+        }
+
+        const blob = await resp.blob();
+        if (cleanedBlobUrl) {
+          URL.revokeObjectURL(cleanedBlobUrl);
+        }
+        cleanedBlobUrl = URL.createObjectURL(blob);
+
+        const imgW = resp.headers.get("X-Image-Width");
+        const imgH = resp.headers.get("X-Image-Height");
+        const procSec = resp.headers.get("X-Process-Seconds");
+        const dlName = resp.headers.get("X-Download-Filename") || "cleaned.png";
+
+        showingOriginal = false;
+        stage.classList.remove("zoomed");
+        stageImg.src = cleanedBlobUrl;
+
+        stateTag.textContent = "Original Image";
+        stateTag.className = "state-tag cleaned";
+
+        if (imgW && imgH) {
+          metaRes.textContent = `${imgW} × ${imgH} px`;
+          resPill.style.display = "inline-block";
+        }
+        metaSize.textContent = `${(blob.size / (1024 * 1024)).toFixed(2)} MB`;
+        sizePill.style.display = "inline-block";
+
+        metaTime.textContent = procSec ? `${procSec}s` : `${((performance.now() - startTime) / 1000).toFixed(2)}s`;
+        timePill.style.display = "inline-block";
+
+        compareBtn.textContent = "Show Watermarked";
+        compareBtn.classList.remove("active");
+        compareBtn.style.display = "inline-flex";
+
+        downloadBtn.href = cleanedBlobUrl;
+        downloadBtn.download = dlName;
+        downloadBtn.style.display = "inline-flex";
+
+        previewCard.style.display = "block";
+        hideStatus();
+      } catch (err) {
+        clearInterval(timerInterval);
+        showStatus("error", "Error: " + err.message);
+      } finally {
+        processBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
